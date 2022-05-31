@@ -44,7 +44,7 @@ public class GUIController implements ActionListener
         JFrame frame = new JFrame("League.GG");
         Image icon = Toolkit.getDefaultToolkit().getImage("src/icon.png");
         frame.setIconImage(icon);
-        frame.setPreferredSize( new Dimension(1350, 1000)); // 1280 X 720 size
+        frame.setPreferredSize( new Dimension(1350, 1000));
         BoxLayout boxLayout = new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS); // top to bottom
         frame.setLayout(boxLayout);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);

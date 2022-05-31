@@ -12,7 +12,7 @@ public class LeagueOfLegendsClient {
     private String baseUrl;
 
     public LeagueOfLegendsClient(){
-        APIkey = "RGAPI-c76cbc75-b524-436a-8482-9d4e3042beca";
+        APIkey = "RGAPI-21fe7878-22ad-45d7-a991-66347ef7071c";
         baseUrl = "https://na1.api.riotgames.com";
     }
 
@@ -23,7 +23,7 @@ public class LeagueOfLegendsClient {
 
         ArrayList<Champion> list = new ArrayList<>();
         JSONArray jsonArray = new JSONArray(response);
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < jsonArray.length(); i++){
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             int id = jsonObject.getInt("championId");
             int points = jsonObject.getInt("championPoints");
