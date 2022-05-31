@@ -61,13 +61,13 @@ public class GUIController implements ActionListener
         JPanel searchPanel = new JPanel();
         JLabel message = new JLabel("<html><i>Search</i><html>"); // Instruction
         JButton submit = new JButton("Submit");
-        JButton clear = new JButton("Clear");
+        JButton clear = new JButton(" Clear ");
 
-        message.setFont(new Font("Arial", Font.BOLD, 40));
-        submit.setFont(new Font("Serif", Font.BOLD, 17));
-        submit.setSize(30,25);
-        clear.setSize(30,25);
-        clear.setFont(new Font("Serif", Font.BOLD, 17));
+        message.setFont(new Font("Serif", Font.BOLD, 40));
+        submit.setFont(new Font("Serif", Font.BOLD, 25));
+        clear.setBackground(new Color(252,134,45));
+        submit.setBackground(new Color(101,186,252));
+        clear.setFont(new Font("Serif", Font.BOLD, 25));
         userEntryField.setFont(new Font("Serif", Font.BOLD, 30));
 
         searchPanel.add(message);
@@ -201,7 +201,7 @@ public class GUIController implements ActionListener
 
 
         }
-        else if (text.equals("Clear"))
+        else if (text.equals(" Clear "))
         {
             userEntryField.setText("");
             titlePanel.setVisible(true);
@@ -209,6 +209,7 @@ public class GUIController implements ActionListener
             topPlayerPanel.setVisible(true);
             bottomPanel.remove(0);
             panelCount = 1;
+            card.next(bottomPanel);
         }
     }
 
