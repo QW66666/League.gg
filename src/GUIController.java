@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 // DAILY NOTICE:
 public class GUIController implements ActionListener
 {
+    private JFrame frame;
     private JTextField userEntryField;
     private JPanel bottomPanel;
     private JPanel projectNamePanel;
@@ -26,6 +27,7 @@ public class GUIController implements ActionListener
 
     public GUIController()
     {
+        frame = new JFrame("League.GG");
         userEntryField = new JTextField(30);
         bottomPanel = new JPanel();
         titlePanel = new JPanel();
@@ -51,9 +53,9 @@ public class GUIController implements ActionListener
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
         //setUp for SearchPanel
         JPanel searchPanel = new JPanel();
-        JLabel message = new JLabel("<html><i>Enter the UserName</i><html>"); // Instruction
+        JLabel message = new JLabel("<html><i>Search</i><html>"); // Instruction
         JButton submit = new JButton("Submit");  // Sumbit Button
-        JButton clear = new JButton("Clear");  // Clear Button
+        JButton clear = new JButton(" Clear ");  // Clear Button
 
 
         projectNamePanel = new JPanel();
@@ -64,18 +66,13 @@ public class GUIController implements ActionListener
         title = new JLabel("", img, SwingConstants.CENTER);
         projectNamePanel.add(title);
 
-        //setUp for SearchPanel; includes searchBar, text, and buttons
-        JPanel searchPanel = new JPanel();
-        JLabel message = new JLabel("<html><i>Search</i><html>"); // Instruction
-        JButton submit = new JButton("Submit");
-        JButton clear = new JButton("Clear");
 
-        message.setFont(new Font("Arial", Font.BOLD, 40));
-        submit.setFont(new Font("Serif", Font.BOLD, 17));
-        submit.setSize(30,25);
-        clear.setSize(30,25);
-        clear.setFont(new Font("Serif", Font.BOLD, 17));
-        userEntryField.setFont(new Font("Serif", Font.BOLD, 30));
+        message.setFont(new Font("Serif", Font.BOLD, 32));
+        submit.setFont(new Font("Serif", Font.BOLD, 20));
+        clear.setFont(new Font("Serif", Font.BOLD, 20));
+        clear.setBackground(new Color(252,134,45));
+        submit.setBackground(new Color(101,186,252));
+        userEntryField.setFont(new Font("Serif", Font.BOLD, 23));
 
 
         searchPanel.add(message);
@@ -85,11 +82,12 @@ public class GUIController implements ActionListener
         userEntryField.addActionListener(new ActionListener(){ // enable ENTER key as replacement for Submit button
             public void actionPerformed(ActionEvent e){
                 String UserName = userEntryField.getText();
-                displayInfo(UserName);
-
-                titlePanel.setVisible(false);
-                projectNamePanel.setVisible(false);
-                topPlayerPanel.setVisible(false);
+                if(displayInfo(UserName) == true)
+                {
+                    titlePanel.setVisible(false);
+                    projectNamePanel.setVisible(false);
+                    topPlayerPanel.setVisible(false);
+                }
             }});
 
         // setUp for titlePanell; Declared as private instance variable
@@ -102,8 +100,6 @@ public class GUIController implements ActionListener
         GridLayout layout = new GridLayout(1,2); // Creates a grid to space off JLabels
         topPlayerPanel.setLayout(layout);
         layout.setHgap(10);
-
-
         // Calling Client (LeagueOfLegendsClient object) and parsing all top 10 player information, transferring it into JLabels
         ArrayList<String> topPlayer = client.parseTopPlayers();
         JLabel Top1_5 = new JLabel("<html>1. " + topPlayer.get(0) + "<br> 2. " + topPlayer.get(1) + "<br> 3. " + topPlayer.get(2) + "<br> 4. "+ topPlayer.get(3) + "<br> 5. "+ topPlayer.get(4) + "<br> <html>");
@@ -113,7 +109,6 @@ public class GUIController implements ActionListener
 
         Top1_5.setForeground(new Color(102,167,197));
         Top6_10.setForeground(new Color(102,167,197));
-        //Top6_10.setForeground(new Color(44,110,96));
 
 
         Top1_5.setFont(new Font("Serif",Font.ITALIC, 40));
@@ -124,8 +119,6 @@ public class GUIController implements ActionListener
 
 
         frame.add(projectNamePanel);
-
-
         frame.add(searchPanel);
         frame.add(titlePanel);
         frame.add(topPlayerPanel);
@@ -136,78 +129,83 @@ public class GUIController implements ActionListener
         frame.setVisible(true);
     }
 
-    public void displayInfo(String Username) // call this method when submit is click
+    public boolean displayInfo(String Username) // call this method when submit is click
     {
         JPanel infoPanel = new JPanel();
         GridLayout layout = new GridLayout(4, 2);
         layout.setHgap(10);
         infoPanel.setLayout(layout);
-        player = client.getPlayer(Username);
-        // Calling champion information based on the user's input into the JTextField; image, rank, nameTitles, and points
-        ArrayList<Champion> championList = player.getMostPlayed();
-        Champion champ1 = championList.get(0);
-        Champion champ2 = championList.get(1);
-        Champion champ3 = championList.get(2);
 
-        ImageIcon soloImage = getFileImage("src/" + player.getSoloTier() + ".png");
-        ImageIcon flexImage = getFileImage("src/" + player.getFlexTier() + ".png");
-        ImageIcon tftImage = getFileImage("src/" + player.getTftTier() + ".png");
-        ImageIcon profileImage = getUrlImage(player.getIconUrl());
+        try {
+            player = client.getPlayer(Username);
+            // Calling champion information based on the user's input into the JTextField; image, rank, nameTitles, and points
+            ArrayList<Champion> championList = player.getMostPlayed();
+            Champion champ1 = championList.get(0);
+            Champion champ2 = championList.get(1);
+            Champion champ3 = championList.get(2);
 
-        Image profile = profileImage.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-        profileImage = new ImageIcon(profile);
+            ImageIcon soloImage = getFileImage("src/" + player.getSoloTier() + ".png");
+            ImageIcon flexImage = getFileImage("src/" + player.getFlexTier() + ".png");
+            ImageIcon tftImage = getFileImage("src/" + player.getTftTier() + ".png");
+            ImageIcon profileImage = getUrlImage(player.getIconUrl());
 
-        JLabel profileLabel = new JLabel("<html>" + Username + "<br>" + "" + "<br>" + "" + "<br>" + player.getLiveStatus() + "<html>",profileImage, SwingConstants.LEFT);
-        JLabel placeholder = new JLabel("<html>" + "<br>" + "<br>" +"Most Played Champions" + "<html>");
-        JLabel rankLabel1 = new JLabel("<html> RANKED SOLO/DUO" + "<br>"+ player.getSoloRank() + "<br>" + player.getSoloWinLose() + "  " + player.getSoloWinRate() + "<html>", soloImage, SwingConstants.LEFT);
-        JLabel rankLabel2 = new JLabel("<html> RANKED FLEX SR" + "<br>" + player.getFlexRank() + "<br>" + player.getFlexWinLose() + "  " + player.getFlexWinRate() + "<html>", flexImage,SwingConstants.LEFT);
-        JLabel rankLabel3 = new JLabel("<html> RANKED TFT" + "<br>" + player.getTftRank(), tftImage, SwingConstants.LEFT);
-        JLabel champLabel1 = new JLabel(champ1.getName() + "     Mastery Points: " + champ1.getPoints() , getUrlImage(champ1.getPictureURL()), SwingConstants.LEFT);
-        JLabel champLabel2 = new JLabel(champ2.getName() + "     Mastery Points: " + champ2.getPoints(), getUrlImage(champ2.getPictureURL()), SwingConstants.LEFT);
-        JLabel champLabel3 = new JLabel(champ3.getName() + "     Mastery Points: " + champ3.getPoints(), getUrlImage(champ3.getPictureURL()), SwingConstants.LEFT);
+            Image profile = profileImage.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            profileImage = new ImageIcon(profile);
 
-        profileLabel.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
-        placeholder.setFont(new Font("Comic Sans MS",Font.BOLD, 40 ));
+            JLabel profileLabel = new JLabel("<html>" + Username + "<br>" + "" + "<br>" + "" + "<br>" + player.getLiveStatus() + "<html>",profileImage, SwingConstants.LEFT);
+            JLabel placeholder = new JLabel("<html>" + "<br>" + "<br>" +"Most Played Champions" + "<html>");
+            JLabel rankLabel1 = new JLabel("<html> RANKED SOLO/DUO" + "<br>"+ player.getSoloRank() + "<br>" + player.getSoloWinLose() + "  " + player.getSoloWinRate() + "<html>", soloImage, SwingConstants.LEFT);
+            JLabel rankLabel2 = new JLabel("<html> RANKED FLEX SR" + "<br>" + player.getFlexRank() + "<br>" + player.getFlexWinLose() + "  " + player.getFlexWinRate() + "<html>", flexImage,SwingConstants.LEFT);
+            JLabel rankLabel3 = new JLabel("<html> RANKED TFT" + "<br>" + player.getTftRank(), tftImage, SwingConstants.LEFT);
+            JLabel champLabel1 = new JLabel(champ1.getName() + "     Mastery Points: " + champ1.getPoints() , getUrlImage(champ1.getPictureURL()), SwingConstants.LEFT);
+            JLabel champLabel2 = new JLabel(champ2.getName() + "     Mastery Points: " + champ2.getPoints(), getUrlImage(champ2.getPictureURL()), SwingConstants.LEFT);
+            JLabel champLabel3 = new JLabel(champ3.getName() + "     Mastery Points: " + champ3.getPoints(), getUrlImage(champ3.getPictureURL()), SwingConstants.LEFT);
 
-        rankLabel1.setFont(new Font("Courier",Font.BOLD, 26  ));
-        rankLabel2.setFont(new Font("Courier",Font.BOLD, 26 ));
-        rankLabel3.setFont(new Font("Courier",Font.BOLD, 26 ));
-        rankLabel1.setForeground(new Color(232,168,124));
-        rankLabel2.setForeground(new Color(195,141,158));
-        rankLabel3.setForeground(new Color(92,189,149));
+            profileLabel.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
+            placeholder.setFont(new Font("Comic Sans MS",Font.BOLD, 40 ));
 
+            rankLabel1.setFont(new Font("Courier",Font.BOLD, 26  ));
+            rankLabel2.setFont(new Font("Courier",Font.BOLD, 26 ));
+            rankLabel3.setFont(new Font("Courier",Font.BOLD, 26 ));
+            rankLabel1.setForeground(new Color(232,168,124));
+            rankLabel2.setForeground(new Color(195,141,158));
+            rankLabel3.setForeground(new Color(92,189,149));
 
-        champLabel1.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
-        champLabel2.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
-        champLabel3.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
+            champLabel1.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
+            champLabel2.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
+            champLabel3.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
 
+            champLabel1.setForeground(new Color(123,186,233));
+            champLabel2.setForeground(new Color(210,105,30));
+            champLabel3.setForeground(new Color(171,123,233));
 
-        champLabel1.setForeground(new Color(123,186,233));
-        champLabel2.setForeground(new Color(210,105,30));
-        champLabel3.setForeground(new Color(171,123,233));
+            infoPanel.add(profileLabel);
+            infoPanel.add(placeholder);
 
-        infoPanel.add(profileLabel);
-        infoPanel.add(placeholder);
+            infoPanel.add(rankLabel1);
+            infoPanel.add(champLabel1);
+            infoPanel.add(rankLabel2);
+            infoPanel.add(champLabel2);
+            infoPanel.add(rankLabel3);
+            infoPanel.add(champLabel3);
 
-
-        infoPanel.add(rankLabel1);
-        infoPanel.add(champLabel1);
-        infoPanel.add(rankLabel2);
-        infoPanel.add(champLabel2);
-        infoPanel.add(rankLabel3);
-        infoPanel.add(champLabel3);
-
-        //panelCount prevent previous panel that gets created saves into bottomPanel
-
-        if(panelCount != 1){
-            bottomPanel.remove(0);
-            panelCount = 1;
-
-
+            //panelCount prevent previous panel that gets created saves into bottomPanel
+            if(panelCount != 1){
+                bottomPanel.remove(0);
+                panelCount = 1;
+            }
+            bottomPanel.add(infoPanel);
+            card.next(bottomPanel); // flip to the next Panel
+            panelCount++;
+            return true;
         }
-        bottomPanel.add(infoPanel);
-        card.next(bottomPanel); // flip to the next Panel
-        panelCount++;
+        catch(Exception e){
+            JLabel warningMessage = new JLabel("Username Not Found");
+            warningMessage.setFont(new Font("Serif", Font.BOLD, 16));
+            JOptionPane.showMessageDialog(frame, warningMessage,
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     @Override
@@ -218,24 +216,21 @@ public class GUIController implements ActionListener
         if (text.equals("Submit"))
         {
             String UserName = userEntryField.getText();
-            displayInfo(UserName);
-            titlePanel.setVisible(false);
-            projectNamePanel.setVisible(false);
-            topPlayerPanel.setVisible(false);
-
-
+            if(displayInfo(UserName))
+            {
+                titlePanel.setVisible(false);
+                projectNamePanel.setVisible(false);
+                topPlayerPanel.setVisible(false);
+            }
         }
-        else if (text.equals("Clear"))
+        else if (text.equals(" Clear "))
         {
             userEntryField.setText("");
             titlePanel.setVisible(true);
-
             projectNamePanel.setVisible(true);
             topPlayerPanel.setVisible(true);
             bottomPanel.remove(0);
             panelCount = 1;
-
-
         }
     }
 
@@ -258,5 +253,4 @@ public class GUIController implements ActionListener
         imageIcon = new ImageIcon(solo1);
         return imageIcon;
     }
-
 }
