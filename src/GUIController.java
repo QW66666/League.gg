@@ -44,7 +44,7 @@ public class GUIController implements ActionListener
     {
 
         JFrame frame = new JFrame("League.GG");
-        Image icon = Toolkit.getDefaultToolkit().getImage("src/icon.png");
+        Image icon = Toolkit.getDefaultToolkit().getImage("src/Images/icon.png");
         frame.setIconImage(icon);
 
         frame.setPreferredSize( new Dimension(1350, 1000)); // 1280 X 720 size
@@ -60,7 +60,7 @@ public class GUIController implements ActionListener
 
         projectNamePanel = new JPanel();
         JLabel title;
-        ImageIcon img = new ImageIcon("./src/title.png");
+        ImageIcon img = new ImageIcon("./src/Images/title.png");
         Image logo = img.getImage().getScaledInstance(850, 450, Image.SCALE_SMOOTH);
         img = new ImageIcon(logo);
         title = new JLabel("", img, SwingConstants.CENTER);
@@ -144,9 +144,9 @@ public class GUIController implements ActionListener
             Champion champ2 = championList.get(1);
             Champion champ3 = championList.get(2);
 
-            ImageIcon soloImage = getFileImage("src/" + player.getSoloTier() + ".png");
-            ImageIcon flexImage = getFileImage("src/" + player.getFlexTier() + ".png");
-            ImageIcon tftImage = getFileImage("src/" + player.getTftTier() + ".png");
+            ImageIcon soloImage = getFileImage("src/Images/" + player.getSoloTier() + ".png");
+            ImageIcon flexImage = getFileImage("src/Images/" + player.getFlexTier() + ".png");
+            ImageIcon tftImage = getFileImage("src/Images/" + player.getTftTier() + ".png");
             ImageIcon profileImage = getUrlImage(player.getIconUrl());
 
             Image profile = profileImage.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
