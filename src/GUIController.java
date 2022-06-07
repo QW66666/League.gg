@@ -54,7 +54,7 @@ public class GUIController implements ActionListener
         //setUp for SearchPanel
         JPanel searchPanel = new JPanel();
         JLabel message = new JLabel("<html><i>Search</i><html>"); // Instruction
-        JButton submit = new JButton("Submit");  // Sumbit Button
+        JButton submit = new JButton("Submit");  // Submit Button
         JButton clear = new JButton(" Clear ");  // Clear Button
 
 
@@ -82,7 +82,7 @@ public class GUIController implements ActionListener
         userEntryField.addActionListener(new ActionListener(){ // enable ENTER key as replacement for Submit button
             public void actionPerformed(ActionEvent e){
                 String UserName = userEntryField.getText();
-                if(displayInfo(UserName) == true)
+                if(displayInfo(UserName))
                 {
                     titlePanel.setVisible(false);
                     projectNamePanel.setVisible(false);
@@ -90,7 +90,7 @@ public class GUIController implements ActionListener
                 }
             }});
 
-        // setUp for titlePanell; Declared as private instance variable
+        // setUp for title Panel; Declared as private instance variable
         JLabel titleLabel = new JLabel("<html> <i> Top Players </i> <html>");
         titleLabel.setFont(new Font("Monospaced",Font.BOLD, 69));
         titleLabel.setForeground(new Color(238,50,51));
@@ -101,7 +101,7 @@ public class GUIController implements ActionListener
         topPlayerPanel.setLayout(layout);
         layout.setHgap(10);
         // Calling Client (LeagueOfLegendsClient object) and parsing all top 10 player information, transferring it into JLabels
-        ArrayList<String> topPlayer = client.parseTopPlayers();
+        ArrayList<String> topPlayer = client.getTopPlayers();
         JLabel Top1_5 = new JLabel("<html>1. " + topPlayer.get(0) + "<br> 2. " + topPlayer.get(1) + "<br> 3. " + topPlayer.get(2) + "<br> 4. "+ topPlayer.get(3) + "<br> 5. "+ topPlayer.get(4) + "<br> <html>");
         JLabel Top6_10 = new JLabel("<html>6. " + topPlayer.get(5) + "<br> 7. " + topPlayer.get(6) + "<br> 8. " + topPlayer.get(7) + "<br> 9. "+ topPlayer.get(8) + "<br> 10. "+ topPlayer.get(9) + "<br> <html>");
         Top1_5.setHorizontalAlignment(SwingConstants.CENTER);
@@ -157,9 +157,9 @@ public class GUIController implements ActionListener
             JLabel rankLabel1 = new JLabel("<html> RANKED SOLO/DUO" + "<br>"+ player.getSoloRank() + "<br>" + player.getSoloWinLose() + "  " + player.getSoloWinRate() + "<html>", soloImage, SwingConstants.LEFT);
             JLabel rankLabel2 = new JLabel("<html> RANKED FLEX SR" + "<br>" + player.getFlexRank() + "<br>" + player.getFlexWinLose() + "  " + player.getFlexWinRate() + "<html>", flexImage,SwingConstants.LEFT);
             JLabel rankLabel3 = new JLabel("<html> RANKED TFT" + "<br>" + player.getTftRank(), tftImage, SwingConstants.LEFT);
-            JLabel champLabel1 = new JLabel(champ1.getName() + "     Mastery Points: " + champ1.getPoints() , getUrlImage(champ1.getPictureURL()), SwingConstants.LEFT);
-            JLabel champLabel2 = new JLabel(champ2.getName() + "     Mastery Points: " + champ2.getPoints(), getUrlImage(champ2.getPictureURL()), SwingConstants.LEFT);
-            JLabel champLabel3 = new JLabel(champ3.getName() + "     Mastery Points: " + champ3.getPoints(), getUrlImage(champ3.getPictureURL()), SwingConstants.LEFT);
+            JLabel champLabel1 = new JLabel(champ1.getName() + "   Level:" + champ1.getLevel() + "     Mastery Points: " + champ1.getPoints() , getUrlImage(champ1.getPictureURL()), SwingConstants.LEFT);
+            JLabel champLabel2 = new JLabel(champ2.getName() + "   Level:" + champ2.getLevel() + "     Mastery Points: " + champ2.getPoints(), getUrlImage(champ2.getPictureURL()), SwingConstants.LEFT);
+            JLabel champLabel3 = new JLabel(champ3.getName() + "   Level:" + champ3.getLevel() + "     Mastery Points: " + champ3.getPoints(), getUrlImage(champ3.getPictureURL()), SwingConstants.LEFT);
 
             profileLabel.setFont(new Font("Comic Sans MS",Font.BOLD, 25 ));
             placeholder.setFont(new Font("Comic Sans MS",Font.BOLD, 40 ));

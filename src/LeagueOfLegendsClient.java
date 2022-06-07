@@ -12,16 +12,8 @@ public class LeagueOfLegendsClient {
     private String baseUrl;
 
     public LeagueOfLegendsClient(){
-        APIkey = "RGAPI-c2d3cd72-9544-4004-ae94-d22aa586c2ce";
+        APIkey = "RGAPI-1bb39505-242b-4528-a4d4-9180545b4c48";
         baseUrl = "https://na1.api.riotgames.com";
-    }
-
-    private String getID(String name){
-        name = fixName(name);
-        String endPoint = "/lol/summoner/v4/summoners/by-name/" + name;
-        String url = baseUrl + endPoint + "?api_key=" + APIkey;
-        JSONObject jsonObject = new JSONObject(makeAPICall(url));
-        return jsonObject.getString("id");
     }
 
     public Player getPlayer(String name){
@@ -69,21 +61,22 @@ public class LeagueOfLegendsClient {
             flexWinLose = flex.getInt("wins") + " W  " + flex.getInt("losses") + " L";
             flexWinRate = round((double)flex.getInt("wins") / (flex.getInt("wins") + flex.getInt("losses")) * 100) + "%";
         }
-        Player player = new Player(soloRank,soloTier, flexRank, flexTier, tftRank, tftTier, soloWinLose,soloWinRate,flexWinLose,flexWinRate,parseJSONChampion(summonerID), getIconUrl(name), getGameStatus(summonerID));
+        Player player = new Player(soloRank,soloTier, flexRank, flexTier, tftRank, tftTier, soloWinLose,soloWinRate,flexWinLose,flexWinRate,getChampions(summonerID), getIconUrl(name), getGameStatus(summonerID));
         return player;
 
     }
 
-    public ArrayList<Champion> parseJSONChampion(String summonerID){
+    public ArrayList<Champion> getChampions(String summonerID){
         String endPoint = "/lol/champion-mastery/v4/champion-masteries/by-summoner/" + summonerID;
         String champUrl = baseUrl + endPoint + "?api_key=" + APIkey;
         String response = makeAPICall(champUrl);
 
         ArrayList<Champion> list = new ArrayList<>();
         JSONArray jsonArray = new JSONArray(response);
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < jsonArray.length(); i++){
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             int id = jsonObject.getInt("championId");
+            int level = jsonObject.getInt("championLevel");
             int points = jsonObject.getInt("championPoints");
             String championName = "";
             String pictureURL = "";
@@ -104,14 +97,14 @@ public class LeagueOfLegendsClient {
 
                 }
             }
-            Champion champion = new Champion(championName, pictureURL, points);
+            Champion champion = new Champion(championName, pictureURL, level, points);
             list.add(champion);
         }
         return list;
     }
 
 
-    public ArrayList<String> parseTopPlayers() {
+    public ArrayList<String> getTopPlayers() {
         String endPoint = "/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5";
         String url = baseUrl + endPoint + "?api_key=" + APIkey;
         String response = makeAPICall(url);
@@ -136,7 +129,13 @@ public class LeagueOfLegendsClient {
         return topPlayers;
     }
 
-
+    private String getID(String name){
+        name = fixName(name);
+        String endPoint = "/lol/summoner/v4/summoners/by-name/" + name;
+        String url = baseUrl + endPoint + "?api_key=" + APIkey;
+        JSONObject jsonObject = new JSONObject(makeAPICall(url));
+        return jsonObject.getString("id");
+    }
 
     private String getIconUrl(String name){
         name = fixName(name);

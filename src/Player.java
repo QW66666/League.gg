@@ -16,8 +16,6 @@ public class Player {
     private String liveStatus;
  
     public Player(String soloRank, String soloTier, String flexRank, String flexTier, String tftRank, String tftTier, String soloWinLose, String soloWinRate, String flexWinlose, String flexWinRate, ArrayList<Champion> mostPlayed, String iconUrl, String liveStatus) {
- 
- 
         this.soloRank = soloRank;
         this.soloTier = soloTier;
         this.flexRank = flexRank;
@@ -76,6 +74,5 @@ public class Player {
     public String getIconUrl(){return iconUrl;}
 
     public String getLiveStatus(){return liveStatus;}
-
 
 }
