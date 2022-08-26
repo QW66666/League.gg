@@ -1,3 +1,4 @@
+import jdk.swing.interop.SwingInterOpUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,7 +16,7 @@ public class ChampionListThread extends LeagueOfLegendsClient implements Callabl
 
         ArrayList<Champion> list = new ArrayList<>();
         JSONArray jsonArray = new JSONArray(response);
-        for(int i = 0; i < jsonArray.length(); i++){
+        for(int i = 0; i < 3; i++){
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             int id = jsonObject.getInt("championId");
             int level = jsonObject.getInt("championLevel");
@@ -36,17 +37,13 @@ public class ChampionListThread extends LeagueOfLegendsClient implements Callabl
                         championName = character.getString("id");
                         pictureURL = "http://ddragon.leagueoflegends.com/cdn/12.9.1/img/champion/" + championName + ".png";
                     }
-
                 }
             }
+            System.out.println(i);
             Champion champion = new Champion(championName, pictureURL, level, points);
             list.add(champion);
         }
         System.out.println(list);
         return list;
-    }
-
-    public void print(){
-        System.out.println(GUIController.summonerID);
     }
 }
