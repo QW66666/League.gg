@@ -1,3 +1,7 @@
+package League.threads;
+
+import League.GUI.GUIController;
+import League.info.LeagueOfLegendsClient;
 import org.json.JSONObject;
 
 import java.util.concurrent.Callable;
@@ -6,8 +10,8 @@ public class GameStatusThread extends LeagueOfLegendsClient implements Callable<
     @Override
     public String call() throws Exception {
         String endPoint = "/lol/spectator/v4/active-games/by-summoner/";
-        String url = baseUrl + endPoint + GUIController.summonerID + "?api_key=" + APIkey;
-        String response = makeAPICall(url);
+        String url = LeagueOfLegendsClient.baseUrl + endPoint + GUIController.summonerID + "?api_key=" + LeagueOfLegendsClient.APIkey;
+        String response = LeagueOfLegendsClient.makeAPICall(url);
 
         String status = "IN GAME ";
         try{

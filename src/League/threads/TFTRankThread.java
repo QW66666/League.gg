@@ -1,3 +1,7 @@
+package League.threads;
+
+import League.GUI.GUIController;
+import League.info.LeagueOfLegendsClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

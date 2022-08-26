@@ -1,3 +1,5 @@
+package League.info;
+
 public class Player2 {
     private String soloRank;
     private String soloTier;

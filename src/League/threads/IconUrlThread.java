@@ -1,3 +1,7 @@
+package League.threads;
+
+import League.GUI.GUIController;
+import League.info.LeagueOfLegendsClient;
 import org.json.JSONObject;
 
 import java.util.concurrent.Callable;

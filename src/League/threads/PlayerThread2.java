@@ -1,8 +1,12 @@
+package League.threads;
+
+import League.GUI.GUIController;
+import League.info.LeagueOfLegendsClient;
+import League.info.Player2;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.util.concurrent.Callable;
 
 public class PlayerThread2 extends LeagueOfLegendsClient implements Callable<Object> {
