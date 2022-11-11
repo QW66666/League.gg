@@ -53,7 +53,6 @@ public class PlayerThread2 extends LeagueOfLegendsClient implements Callable<Obj
             flexWinRate = round((double)flex.getInt("wins") / (flex.getInt("wins") + flex.getInt("losses")) * 100) + "%";
         }
         Player2 player2 = new Player2(soloRank,soloTier,flexRank,flexTier,soloWinLose,soloWinRate,flexWinLose,flexWinRate);
-        System.out.println(player2);
         return player2;
     }
 }

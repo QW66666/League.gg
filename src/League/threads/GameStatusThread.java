@@ -29,7 +29,6 @@ public class GameStatusThread extends LeagueOfLegendsClient implements Callable<
                 status = "NOT IN GAME";
             }
         }
-        System.out.println(status);
         return status;
     }
 }

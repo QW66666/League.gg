@@ -20,7 +20,6 @@ public class TFTRankThread extends LeagueOfLegendsClient implements Callable<Obj
             JSONObject info = arr.getJSONObject(0);
             tftRank = info.getString("tier") + " " + info.getString("rank") + " " + info.getInt("leaguePoints");
         }
-        System.out.println(tftRank);
         return tftRank;
     }
 }

@@ -15,7 +15,6 @@ public class IconUrlThread extends LeagueOfLegendsClient implements Callable<Obj
         JSONObject jsonObject = new JSONObject(makeAPICall(url));
         int iconId = jsonObject.getInt("profileIconId");
         String iconUrl = "http://ddragon.leagueoflegends.com/cdn/12.10.1/img/profileicon/" + iconId + ".png";
-        System.out.println(iconUrl);
         return iconUrl;
     }
 }

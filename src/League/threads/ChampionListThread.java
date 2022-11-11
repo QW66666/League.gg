@@ -46,7 +46,6 @@ public class ChampionListThread extends LeagueOfLegendsClient implements Callabl
             Champion champion = new Champion(championName, pictureURL, level, points);
             list.add(champion);
         }
-        System.out.println(list);
         return list;
     }
 }
