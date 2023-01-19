@@ -1,3 +1,5 @@
+package League.info;
+
 public class Champion {
     private String name;
     private String pictureURL;

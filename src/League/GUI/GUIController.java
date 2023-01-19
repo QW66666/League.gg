@@ -1,15 +1,21 @@
+package League.GUI;
+
+import League.info.Champion;
+import League.info.LeagueOfLegendsClient;
+import League.info.Player;
+import League.info.Player2;
+import League.threads.*;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.util.concurrent.*;
 
 // DAILY NOTICE:
 public class GUIController implements ActionListener
@@ -24,6 +30,8 @@ public class GUIController implements ActionListener
     private JPanel titlePanel;
     private JPanel topPlayerPanel;
     private CardLayout card;
+    public static String userName;
+    public static String summonerID;
 
     public GUIController()
     {
@@ -37,6 +45,8 @@ public class GUIController implements ActionListener
         player = null;
         client = new LeagueOfLegendsClient();
         panelCount = 1;
+        userName = "";
+        summonerID = "";
         screenGUI();
     }
 
@@ -81,12 +91,17 @@ public class GUIController implements ActionListener
         searchPanel.add(clear);
         userEntryField.addActionListener(new ActionListener(){ // enable ENTER key as replacement for Submit button
             public void actionPerformed(ActionEvent e){
-                String UserName = userEntryField.getText();
-                if(displayInfo(UserName))
-                {
-                    titlePanel.setVisible(false);
-                    projectNamePanel.setVisible(false);
-                    topPlayerPanel.setVisible(false);
+                userName = userEntryField.getText();
+                summonerID = LeagueOfLegendsClient.getID(LeagueOfLegendsClient.fixName(userName));
+                try {
+                    if(displayInfo())
+                    {
+                        titlePanel.setVisible(false);
+                        projectNamePanel.setVisible(false);
+                        topPlayerPanel.setVisible(false);
+                    }
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }});
 
@@ -129,17 +144,63 @@ public class GUIController implements ActionListener
         frame.setVisible(true);
     }
 
-    public boolean displayInfo(String Username) // call this method when submit is click
+    public boolean displayInfo() throws InterruptedException // call this method when submit is click
     {
         JPanel infoPanel = new JPanel();
         GridLayout layout = new GridLayout(4, 2);
         layout.setHgap(10);
         infoPanel.setLayout(layout);
 
+
+        PlayerThread2 playerThread2 = new PlayerThread2();
+        TFTRankThread tftRankThread = new TFTRankThread();
+        ChampionListThread championListThread = new ChampionListThread();
+        IconUrlThread iconUrlThread = new IconUrlThread();
+        GameStatusThread gameStatusThread = new GameStatusThread();
+
+        ArrayList<Callable<Object>> servicesToCall = new ArrayList<>();
+        servicesToCall.add(tftRankThread);
+        servicesToCall.add(iconUrlThread);
+        servicesToCall.add(gameStatusThread);
+        servicesToCall.add(playerThread2);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ArrayList<Future<Object>> futures = (ArrayList<Future<Object>>) executorService.invokeAll((servicesToCall));
+        executorService.shutdown();
+
+
         try {
-            player = client.getPlayer(Username);
+            //System.out.println(GUIController.userName);
+            Player2 player2 = null;
+            //Player2 player2 = new Player2("","","","","","","","");
+            String TFTRank = "Unranked";
+            String IconURL = "";
+            String gameStatus = "";
+            for (Future<Object> future : futures) {
+                if(future.get() instanceof Player2) {
+                    player2 = (Player2)future.get();
+                }
+                else if(future.get() instanceof TFTRankThread){
+                    TFTRank = (String)future.get();
+                }
+                else {
+                    gameStatus = (String)future.get();
+                }
+            }
+
+            String tftTier = "Unranked";
+            String tftRank = "Unranked";
+            System.out.println(TFTRank);
+            if(!TFTRank.equals("Unranked")){
+                tftTier = TFTRank.substring(0, TFTRank.indexOf(" "));
+                tftRank = TFTRank.substring(TFTRank.indexOf(" "), TFTRank.indexOf(" ") + 1);
+            }
+
+            IconURL = (String)futures.get(1).get();
+            //player = client.getPlayer(Username);
+            player = new Player(player2.getSoloRank(), player2.getSoloTier(), player2.getFlexRank(),player2.getFlexTier(), tftRank,tftTier, player2.getSoloWinLose(), player2.getSoloWinRate(), player2.getFlexWinLose(),player2.getFlexWinRate(), new ArrayList<>(), IconURL, gameStatus);
+
             // Calling champion information based on the user's input into the JTextField; image, rank, nameTitles, and points
-            ArrayList<Champion> championList = player.getMostPlayed();
+            ArrayList<Champion> championList = championListThread.call();
             Champion champ1 = championList.get(0);
             Champion champ2 = championList.get(1);
             Champion champ3 = championList.get(2);
@@ -147,12 +208,13 @@ public class GUIController implements ActionListener
             ImageIcon soloImage = getFileImage("src/Images/" + player.getSoloTier() + ".png");
             ImageIcon flexImage = getFileImage("src/Images/" + player.getFlexTier() + ".png");
             ImageIcon tftImage = getFileImage("src/Images/" + player.getTftTier() + ".png");
-            ImageIcon profileImage = getUrlImage(player.getIconUrl());
+            ImageIcon profileImage = getUrlImage(IconURL);
 
             Image profile = profileImage.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
             profileImage = new ImageIcon(profile);
 
-            JLabel profileLabel = new JLabel("<html>" + Username + "<br>" + "" + "<br>" + "" + "<br>" + player.getLiveStatus() + "<html>",profileImage, SwingConstants.LEFT);
+            JLabel profileLabel = new JLabel("<html>" + userName + "<br>" + "" + "<br>" + "" + "<br>" + player.getLiveStatus() + "<html>",profileImage, SwingConstants.LEFT);
+            System.out.println("STATUS: " + player.getLiveStatus());
             JLabel placeholder = new JLabel("<html>" + "<br>" + "<br>" +"Most Played Champions" + "<html>");
             JLabel rankLabel1 = new JLabel("<html> RANKED SOLO/DUO" + "<br>"+ player.getSoloRank() + "<br>" + player.getSoloWinLose() + "  " + player.getSoloWinRate() + "<html>", soloImage, SwingConstants.LEFT);
             JLabel rankLabel2 = new JLabel("<html> RANKED FLEX SR" + "<br>" + player.getFlexRank() + "<br>" + player.getFlexWinLose() + "  " + player.getFlexWinRate() + "<html>", flexImage,SwingConstants.LEFT);
@@ -215,12 +277,18 @@ public class GUIController implements ActionListener
 
         if (text.equals("Submit"))
         {
-            String UserName = userEntryField.getText();
-            if(displayInfo(UserName))
-            {
-                titlePanel.setVisible(false);
-                projectNamePanel.setVisible(false);
-                topPlayerPanel.setVisible(false);
+            userName = userEntryField.getText();
+            summonerID = LeagueOfLegendsClient.getID(LeagueOfLegendsClient.fixName(userName));
+            System.out.println(summonerID);
+            try {
+                if(displayInfo())
+                {
+                    titlePanel.setVisible(false);
+                    projectNamePanel.setVisible(false);
+                    topPlayerPanel.setVisible(false);
+                }
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
             }
         }
         else if (text.equals(" Clear "))
